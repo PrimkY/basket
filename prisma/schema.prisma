@@ -15,20 +15,30 @@ model Product {
   name      String
   price     Float
   description String
-  baskets   Basket[]
+  baskets ProductInBasket[]
 }
 
 model Basket {
-  id        Int      @id @default(autoincrement())
-  totalCost Float
-  products  Product[]
-  user      User @relation(fields: [userId], references: [id])
-  userId    Int @unique
+  id     Int      @id @default(autoincrement())
+  userId Int
+  user   User     @relation(fields: [userId], references: [id])
+  products ProductInBasket[]
 }
 
 model User {
   id       Int      @id @default(autoincrement())
-  email    String
+  email String
   password String
-  basket   Basket?
+  baskets  Basket[]
 }
+
+model ProductInBasket {
+  basketId  Int      @map("basketId")
+  productId Int      @map("productId")
+  quantity  Int
+  basket    Basket   @relation(fields: [basketId], references: [id])
+  product   Product  @relation(fields: [productId], references: [id])
+
+  @@id([basketId, productId])
+}
+

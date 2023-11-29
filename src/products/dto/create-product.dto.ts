@@ -17,5 +17,4 @@ export class CreateProductDto {
     @ApiProperty({ example: 'block of 500 paper shits', description: 'not uniq / string' })
     @IsNotEmpty()
     readonly description: string;
-
 }
