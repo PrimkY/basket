@@ -9,10 +9,9 @@ export class CreateProductDto {
   @IsNotEmpty()
   readonly name: string;
   @ApiProperty({
-    example: '105.52',
+    example: 105.52,
     description: 'uniq and require price / string',
   })
-  @IsNotEmpty()
   readonly price: number;
   @ApiProperty({
     example: 'block of 500 paper shits',
