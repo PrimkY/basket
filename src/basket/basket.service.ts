@@ -11,7 +11,7 @@ export class BasketService {
     private readonly productService: ProductsService,
   ) {}
 
-  async createBasket(userId: number): Promise<Basket> {
+  createBasket(userId: number): Promise<Basket> {
     return this.prisma.basket.create({
       data: {
         userId,
@@ -19,15 +19,15 @@ export class BasketService {
     });
   }
 
-  async getBasketById(id: number): Promise<Basket | null> {
+  getBasketById(id: number): Promise<Basket | null> {
     return this.prisma.basket.findUnique({
       where: { id },
       include: { products: true },
     });
   }
 
-  async addProductToBasket(basketId, productId, quantity) {
-    return await this.prisma.productInBasket.create({
+  addProductToBasket(basketId, productId, quantity) {
+    return this.prisma.productInBasket.create({
       data: {
         basketId,
         productId,
@@ -40,7 +40,7 @@ export class BasketService {
     const basketId = data.basketId;
     const productId = data.productId;
     const quantity = data.quantity;
-    return await this.prisma.productInBasket.updateMany({
+    const response = await this.prisma.productInBasket.updateMany({
       where: {
         basketId,
         productId,
@@ -49,13 +49,23 @@ export class BasketService {
         quantity: quantity,
       },
     });
+    let answer: string;
+    response?.count
+      ? (answer = 'Successfully updated')
+      : (answer = 'Update failed');
+    return answer;
   }
 
   async deleteProductFromBasket(data: RemoveProductDto) {
     const basketId = data.basketId;
     const productId = data.productId;
-    return this.prisma.productInBasket.deleteMany({
+    const response = await this.prisma.productInBasket.deleteMany({
       where: { basketId, productId },
     });
+    let answer: string;
+    response?.count
+      ? (answer = 'Successfully deleted')
+      : (answer = 'There is no product for delete');
+    return answer;
   }
 }
