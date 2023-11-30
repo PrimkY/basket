@@ -9,6 +9,7 @@ to use app you should do next things:
 - download this repo ( git clone https://github.com/PrimkY/basket.git )
 - cd basket
 - npm i
+- npm run start:dev
 - docker-compose up
 - npx prisma migrate dev
 - open http://localhost:3000/api/docs to test methods
