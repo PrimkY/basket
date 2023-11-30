@@ -8,10 +8,16 @@ import {
   Delete,
 } from '@nestjs/common';
 import { User } from '@prisma/client';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBadRequestResponse,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { UsersService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { BasketService } from '../basket/basket.service';
+import { CreateProductDto } from '../products/dto/create-product.dto';
 
 @ApiTags('Users')
 @Controller('api/users')
@@ -20,10 +26,12 @@ export class UsersController {
     private readonly usersService: UsersService,
     private readonly basketService: BasketService,
   ) {}
+
   @ApiOperation({ summary: 'Creating user' })
-  @ApiResponse({ status: 201 })
+  @ApiBadRequestResponse({ description: 'Bad Request' })
+  @ApiResponse({ status: 201, type: CreateUserDto })
   @Post()
-  async createUser(@Body() data: CreateUserDto): Promise<User> {
+  async createUser(@Body() data: CreateUserDto) {
     const response = this.usersService.createUser(data);
     const newUserId = response.then((data) => data.id);
     await this.basketService.createBasket(await newUserId);
@@ -31,33 +39,40 @@ export class UsersController {
   }
 
   @ApiOperation({ summary: 'Get all users' })
-  @ApiResponse({ status: 200 })
+  @ApiBadRequestResponse({ description: 'Bad Request' })
+  @ApiResponse({ status: 200, type: [CreateUserDto] })
   @Get()
-  async getUsers(): Promise<User[]> {
+  getUsers(): Promise<User[]> {
     return this.usersService.getUsers();
   }
 
-  @ApiOperation({ summary: 'Method to get one user by id' })
-  @ApiResponse({ status: 200 })
+  @ApiBadRequestResponse({ description: 'Bad Request' })
+  @ApiResponse({ status: 201, type: CreateUserDto })
   @Get(':id')
-  async getUserById(@Param('id') id: string): Promise<User | null> {
+  getUserById(@Param('id') id: string): Promise<User | null> {
     return this.usersService.getUserById(+id);
   }
 
   @ApiOperation({ summary: 'update user by id' })
-  @ApiResponse({ status: 200 })
+  @ApiBadRequestResponse({ description: 'Bad Request' })
+  @ApiResponse({
+    status: 200,
+    description: 'returns status 200 on success',
+  })
   @Put(':id')
-  async updateUser(
-    @Param('id') id: string,
-    @Body() data: CreateUserDto,
-  ): Promise<User> {
+  updateUser(@Param('id') id: string, @Body() data: CreateUserDto) {
     return this.usersService.updateUser(+id, data);
   }
 
-  @ApiOperation({ summary: 'delete user by id' })
+  @ApiOperation({ summary: 'Delete user by id' })
+  @ApiBadRequestResponse({ description: 'Bad Request' })
+  @ApiResponse({
+    status: 200,
+    description: 'returns status 200 on success',
+  })
   @ApiResponse({ status: 200 })
   @Delete(':id')
-  async deleteUser(@Param('id') id: string): Promise<User> {
+  deleteUser(@Param('id') id: string) {
     return this.usersService.deleteUser(+id);
   }
 }
