@@ -4,3 +4,6 @@
 + CRUD for products and basket
 + swagger
 + docker compose file
+
+docker-compose up
+npx prisma migrate dev
